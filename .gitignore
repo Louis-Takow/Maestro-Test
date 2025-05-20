@@ -1,0 +1,26 @@
+# Prevent staging/committing system and personal folders
+*.tmp
+*.lnk
+*.docx
+*.pdf
+*.txt
+
+# Windows system folders
+AppData/
+Documents/
+Downloads/
+Desktop/
+Music/
+Pictures/
+Videos/
+NTUSER.*
+
+# Tools and caches
+.gradle/
+.vscode/
+.idea/
+.cache/
+.config/
+.ssh/
+.android/
+.emulator_console_auth_token
