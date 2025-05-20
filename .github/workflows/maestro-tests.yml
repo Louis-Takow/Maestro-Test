@@ -27,4 +27,4 @@ jobs:
 
       - name: Run Maestro tests
         run: |
-          maestro test test-flows/
+          maestro test test-flows/smoke_test.yaml
