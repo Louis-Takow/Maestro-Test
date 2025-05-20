@@ -60,5 +60,6 @@ appId: com.swaglabsmobileapp # Replace with your app's package name
 - tapOn: "logout"
 - stopApp # close the app
     
+    
 
 
