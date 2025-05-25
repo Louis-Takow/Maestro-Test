@@ -1,43 +1,50 @@
-name: Maestro Test
+name: Run Maestro Tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  test:
+  maestro-test:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Set up Java
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
           distribution: 'temurin'
+          java-version: '17'
 
-      - name: Set up Android SDK
+      - name: Install Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Create and start Android emulator
-        run: |
-          echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64"
-          emulator -avd test -no-snapshot -no-window -no-audio &
-
-      - name: Wait for emulator to start
-        run: |
-          adb wait-for-device
-          adb shell settings put global window_animation_scale 0
-          adb shell settings put global transition_animation_scale 0
-          adb shell settings put global animator_duration_scale 0
-          adb shell input keyevent 82
-
-      - name: Install Maestro
+      - name: Download Maestro
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Run Maestro test
+      - name: Start Android Emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86_64
+          profile: pixel_3
+          script: echo "Emulator ready"
+
+      - name: Install APK (if needed)
+        run: |
+          adb install C:\Users\joelt\Downloads\Android.SauceLabs.Mobile.Sample.app.2.7.1.apk
+
+      - name: Run Maestro Tests
         run: maestro test test-flows/smoke_test.yaml
+      - name: Upload Maestro Report (Optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-report
+          path: maestro-output/
