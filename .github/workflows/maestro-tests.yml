@@ -20,7 +20,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install Android SDK
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Download Maestro
@@ -37,14 +37,20 @@ jobs:
           profile: pixel_3
           script: echo "Emulator ready"
 
-      - name: Install APK (if needed)
+      - name: Install Sample APK
         run: |
-          adb install C:\Users\joelt\Downloads\Android.SauceLabs.Mobile.Sample.app.2.7.1.apk
+          wget https://github.com/saucelabs/sample-app-mobile/releases/download/v2.7.1/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk -O sample-app.apk
+          adb install sample-app.apk
 
       - name: Run Maestro Tests
         run: maestro test test-flows/smoke_test.yaml
+
       - name: Upload Maestro Report (Optional)
         uses: actions/upload-artifact@v4
         with:
           name: maestro-report
           path: maestro-output/
+
+      # Optional: Integrate with Maestro Cloud if API key is available
+      # - name: Upload results to Maestro Cloud
+      #   run: maestro cloud test --apiKey ${{ secrets.MAESTRO_CLOUD_API_KEY }} --app sample-app.apk --tests test-flows/
